@@ -33,7 +33,7 @@ val rudderClient: RudderClient = RudderClient.getInstance(
     RudderConfig.Builder()
         .withEndPointUri(END_POINT_URI)
         .withLogLevel(RudderLogger.RudderLogLevel.DEBUG)
-        .withFactory(BranchIntegrationFactory.FACTORY)
+        .withFactory(AppsFlyerIntegrationFactory.FACTORY)
         .build()
 )
 ```
