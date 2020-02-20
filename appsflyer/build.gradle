@@ -22,12 +22,13 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url "https://dl.bintray.com/rudderstack/rudderstack" }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    compileOnly project(':rudder-sdk-core')
+    compileOnly 'com.rudderstack.android.sdk:core:1.0'
 
     implementation 'com.appsflyer:af-android-sdk:4.10.0'
-    implementation 'com.android.installreferrer:installreferrer:1.0'
+    implementation 'com.android.installreferrer:installreferrer:1.1.1'
 }
