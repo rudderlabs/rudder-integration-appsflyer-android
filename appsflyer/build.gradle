@@ -40,7 +40,8 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // rudder core sdk
-    compileOnly 'com.rudderstack.android.sdk:core:1.0'
+//    compileOnly 'com.rudderstack.android.sdk:core:1.0'
+    compileOnly project(':core')
 
     // appsflyer dependencies
     implementation 'com.appsflyer:af-android-sdk:5.1.1'

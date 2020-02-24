@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RudderAppsFlyerIntegration extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
+public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
     private static final String APPSFLYER_KEY = "AppsFlyer";
     private RudderClient rudderClient;
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
         @Override
         public RudderIntegration<?> create(Object settings, RudderClient client, RudderConfig config) {
-            return new RudderAppsFlyerIntegration(settings, client, config);
+            return new AppsFlyerIntegrationFactory(settings, client, config);
         }
 
         @Override
@@ -36,7 +36,7 @@ public class RudderAppsFlyerIntegration extends RudderIntegration<AppsFlyerLib> 
         }
     };
 
-    private RudderAppsFlyerIntegration(Object config, RudderClient client, RudderConfig rudderConfig) {
+    private AppsFlyerIntegrationFactory(Object config, RudderClient client, RudderConfig rudderConfig) {
         this.rudderClient = client;
         Map<String, Object> destConfig = (Map<String, Object>) config;
         if (destConfig != null && destConfig.containsKey("devKey")) {
@@ -175,10 +175,10 @@ public class RudderAppsFlyerIntegration extends RudderIntegration<AppsFlyerLib> 
                                     afEventName = "remove_from_cart";
                                     break;
                                 default:
-                                    afEventName = eventName.toLowerCase();
+                                    afEventName = eventName.toLowerCase().replace(" ", "_");
                             }
                         } else {
-                            afEventName = eventName.toLowerCase();
+                            afEventName = eventName.toLowerCase().replace(" ", "_");
                         }
                         AppsFlyerLib.getInstance().trackEvent(rudderClient.getApplication(), afEventName, afEventProps);
                     }
