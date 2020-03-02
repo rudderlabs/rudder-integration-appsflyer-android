@@ -1,7 +1,7 @@
 package com.rudderlabs.android.sample.kotlin
 
 import android.app.Application
-import com.rudderstack.android.integrations.appsflyer.RudderAppsFlyerIntegration
+import com.rudderstack.android.integrations.appsflyer.AppsFlyerIntegrationFactory
 import com.rudderstack.android.sdk.core.RudderClient
 import com.rudderstack.android.sdk.core.RudderConfig
 import com.rudderstack.android.sdk.core.RudderLogger
@@ -20,7 +20,7 @@ class MainApplication : Application() {
             WRITE_KEY,
             RudderConfig.Builder()
                 .withEndPointUri(END_POINT_URI)
-                .withFactory(RudderAppsFlyerIntegration.FACTORY)
+                .withFactory(AppsFlyerIntegrationFactory.FACTORY)
                 .withLogLevel(RudderLogger.RudderLogLevel.DEBUG)
                 .build()
         )

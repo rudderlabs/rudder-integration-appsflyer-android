@@ -21,7 +21,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0-beta.1"
     }
 
     buildTypes {
@@ -40,7 +40,7 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // rudder core sdk
-    compileOnly 'com.rudderstack.android.sdk:core:1.0'
+    compileOnly 'com.rudderstack.android.sdk:core:1.0.1-beta.1'
 
     // appsflyer dependencies
     implementation 'com.appsflyer:af-android-sdk:5.1.1'
