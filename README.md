@@ -23,6 +23,10 @@ repositories {
 ```
 implementation 'com.rudderstack.android.sdk:core:1.0.1-beta.1'
 implementation 'com.rudderstack.android.integration:appsflyer:0.1.0-beta.1'
+
+// appsflyer dependencies
+implementation 'com.appsflyer:af-android-sdk:5.1.1'
+implementation 'com.android.installreferrer:installreferrer:1.1.1'  // for attribution
 ```
 
 ## Initialize ```RudderClient```
