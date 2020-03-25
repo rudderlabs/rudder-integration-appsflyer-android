@@ -39,6 +39,17 @@ val rudderClient: RudderClient = RudderClient.getInstance(
 )
 ```
 
+## How to get AppsFlyer ID
+Use this snippet after initialising `RudderClient`
+```
+rudderClient.onIntegrationReady("AppsFlyer") {
+    val appsflyerId = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
+    println("=====================================================")
+    println("AppsFlyer ID: $appsflyerId")
+    println("=====================================================")
+}
+```
+
 ## Send Events
 Follow the steps from [Rudder Android SDK](https://github.com/rudderlabs/rudder-sdk-android)
 
