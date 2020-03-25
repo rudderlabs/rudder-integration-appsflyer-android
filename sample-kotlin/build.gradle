@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70"
     }
 }
 
@@ -16,7 +16,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.rudderstack.sample.braze"
+        applicationId "com.rudderstack.test.android"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
@@ -42,8 +42,10 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation 'com.rudderstack.android.sdk:core:1.0.1-beta.1'
+    implementation 'com.rudderstack.android.sdk:core:1.0.1-beta.2'
     implementation project(':appsflyer')
+    implementation 'com.appsflyer:af-android-sdk:5.1.1'
+    implementation 'com.android.installreferrer:installreferrer:1.1.2'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
 
     testImplementation 'junit:junit:4.12'

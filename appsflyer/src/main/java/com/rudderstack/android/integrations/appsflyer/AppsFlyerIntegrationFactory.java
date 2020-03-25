@@ -228,4 +228,9 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
             this.processEvents(element);
         }
     }
+
+    @Override
+    public AppsFlyerLib getUnderlyingInstance() {
+        return AppsFlyerLib.getInstance();
+    }
 }
