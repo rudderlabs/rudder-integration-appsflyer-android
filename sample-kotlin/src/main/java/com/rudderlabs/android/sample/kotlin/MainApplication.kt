@@ -11,7 +11,6 @@ class MainApplication : Application() {
     companion object {
         private const val WRITE_KEY = "1ZDlYiFCh4wwGZc2o0Ua8pDYDLy"
         private const val DATA_PLANE_URL = "https://a0a95e46.ngrok.io"
-        private const val CONTROL_PLANE_URL = "https://api.dev.rudderlabs.com"
         lateinit var rudderClient: RudderClient
     }
 
@@ -22,7 +21,6 @@ class MainApplication : Application() {
             WRITE_KEY,
             RudderConfig.Builder()
                 .withDataPlaneUrl(DATA_PLANE_URL)
-                .withControlPlaneUrl(CONTROL_PLANE_URL)
                 .withFactory(AppsFlyerIntegrationFactory.FACTORY)
                 .withLogLevel(RudderLogger.RudderLogLevel.DEBUG)
                 .build()
