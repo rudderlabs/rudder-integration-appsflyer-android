@@ -22,12 +22,11 @@ import java.util.Map;
 
 public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
     private static final String APPSFLYER_KEY = "AppsFlyer";
-    private RudderClient rudderClient;
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
         @Override
         public RudderIntegration<?> create(Object settings, RudderClient client, RudderConfig config) {
-            return new AppsFlyerIntegrationFactory(settings, client, config);
+            return new AppsFlyerIntegrationFactory(settings, config);
         }
 
         @Override
@@ -36,17 +35,16 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         }
     };
 
-    private AppsFlyerIntegrationFactory(Object config, RudderClient client, RudderConfig rudderConfig) {
-        this.rudderClient = client;
+    private AppsFlyerIntegrationFactory(Object config, RudderConfig rudderConfig) {
         Map<String, Object> destConfig = (Map<String, Object>) config;
         if (destConfig != null && destConfig.containsKey("devKey")) {
             String appsFlyerKey = (String) destConfig.get("devKey");
             if (!TextUtils.isEmpty(appsFlyerKey)) {
-                AppsFlyerLib.getInstance().init(appsFlyerKey, this, client.getApplication());
+                AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
                 AppsFlyerLib.getInstance().setLogLevel(
                         rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
                                 AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                AppsFlyerLib.getInstance().startTracking(client.getApplication());
+                AppsFlyerLib.getInstance().startTracking(RudderClient.getApplication());
             }
         }
     }
@@ -180,11 +178,11 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                         } else {
                             afEventName = eventName.toLowerCase().replace(" ", "_");
                         }
-                        AppsFlyerLib.getInstance().trackEvent(rudderClient.getApplication(), afEventName, afEventProps);
+                        AppsFlyerLib.getInstance().trackEvent(RudderClient.getApplication(), afEventName, afEventProps);
                     }
                     break;
                 case MessageType.SCREEN:
-                    AppsFlyerLib.getInstance().trackEvent(rudderClient.getApplication(), "screen", message.getProperties());
+                    AppsFlyerLib.getInstance().trackEvent(RudderClient.getApplication(), "screen", message.getProperties());
                     break;
                 case MessageType.IDENTIFY:
                     String userId = message.getUserId();
