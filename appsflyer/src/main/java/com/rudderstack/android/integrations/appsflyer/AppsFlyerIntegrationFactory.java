@@ -44,7 +44,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                 AppsFlyerLib.getInstance().setLogLevel(
                         rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
                                 AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                AppsFlyerLib.getInstance().startTracking(RudderClient.getApplication());
+                AppsFlyerLib.getInstance().start(RudderClient.getApplication());
             }
         }
     }
@@ -178,11 +178,11 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                         } else {
                             afEventName = eventName.toLowerCase().replace(" ", "_");
                         }
-                        AppsFlyerLib.getInstance().trackEvent(RudderClient.getApplication(), afEventName, afEventProps);
+                        AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), afEventName, afEventProps);
                     }
                     break;
                 case MessageType.SCREEN:
-                    AppsFlyerLib.getInstance().trackEvent(RudderClient.getApplication(), "screen", message.getProperties());
+                    AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), "screen", message.getProperties());
                     break;
                 case MessageType.IDENTIFY:
                     String userId = message.getUserId();
