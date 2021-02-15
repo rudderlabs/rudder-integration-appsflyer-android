@@ -141,7 +141,9 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     break;
                                 case ECommerceEvents.ORDER_COMPLETED:
                                     if (property.containsKey(ECommerceParamNames.TOTAL))
-                                        afEventProps.put(AFInAppEventParameterName.PRICE, property.get(ECommerceParamNames.REVENUE));
+                                        afEventProps.put(AFInAppEventParameterName.PRICE, property.get(ECommerceParamNames.TOTAL));
+                                    if (property.containsKey(ECommerceParamNames.REVENUE))
+                                        afEventProps.put(AFInAppEventParameterName.REVENUE, property.get(ECommerceParamNames.REVENUE));
                                     if (property.containsKey(ECommerceParamNames.PRODUCTS)) {
                                         ArrayList<String> pIds = new ArrayList<>();
                                         ArrayList<String> pCats = new ArrayList<>();
