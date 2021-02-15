@@ -19,7 +19,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.2"
     }
 
     buildTypes {
@@ -42,7 +42,7 @@ dependencies {
 
     // appsflyer dependencies
     implementation 'com.appsflyer:af-android-sdk:6.+'
-    implementation 'com.android.installreferrer:installreferrer:2.1'
+    implementation 'com.android.installreferrer:installreferrer:2.2'
 }
 
 apply from: './maven.gradle'
