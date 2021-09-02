@@ -135,27 +135,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     if (property.containsKey(ECommerceParamNames.TOTAL))
                                         afEventProps.put(AFInAppEventParameterName.PRICE, property.get(ECommerceParamNames.TOTAL));
                                     if (property.containsKey(ECommerceParamNames.PRODUCTS)) {
-                                        JSONArray products = getJSONArray(property.get(ECommerceParamNames.PRODUCTS));
-                                        if (products != null && products.length() > 0) {
-                                            ArrayList<String> pIds = new ArrayList<>();
-                                            ArrayList<String> pCats = new ArrayList<>();
-                                            ArrayList<String> pQnts = new ArrayList<>();
-                                            for (int i = 0; i < products.length(); i++) {
-                                                try {
-                                                    JSONObject product = (JSONObject) products.get(i);
-                                                    if (product.has("product_id") && product.has("category") && product.has("quantity")) {
-                                                        pIds.add(getString(product.get("product_id")));
-                                                        pCats.add(getString(product.get("category")));
-                                                        pQnts.add(getString(product.get("quantity")));
-                                                    }
-                                                } catch (JSONException e) {
-                                                    RudderLogger.logDebug("Error while getting Products: " + products);
-                                                }
-                                            }
-                                            afEventProps.put(AFInAppEventParameterName.CONTENT_ID, pIds.toArray());
-                                            afEventProps.put(AFInAppEventParameterName.CONTENT_TYPE, pCats.toArray());
-                                            afEventProps.put(AFInAppEventParameterName.QUANTITY, pQnts.toArray());
-                                        }
+                                        handleProducts(property, afEventProps);
                                     }
                                     if (property.containsKey(ECommerceParamNames.CURRENCY))
                                         afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
@@ -167,27 +147,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     if (property.containsKey(ECommerceParamNames.REVENUE))
                                         afEventProps.put(AFInAppEventParameterName.REVENUE, property.get(ECommerceParamNames.REVENUE));
                                     if (property.containsKey(ECommerceParamNames.PRODUCTS)) {
-                                        JSONArray products = getJSONArray(property.get(ECommerceParamNames.PRODUCTS));
-                                        if (products != null && products.length() > 0) {
-                                            ArrayList<String> pIds = new ArrayList<>();
-                                            ArrayList<String> pCats = new ArrayList<>();
-                                            ArrayList<String> pQnts = new ArrayList<>();
-                                            for (int i = 0; i < products.length(); i++) {
-                                                try {
-                                                    JSONObject product = (JSONObject) products.get(i);
-                                                    if (product.has("product_id") && product.has("category") && product.has("quantity")) {
-                                                        pIds.add(getString(product.get("product_id")));
-                                                        pCats.add(getString(product.get("category")));
-                                                        pQnts.add(getString(product.get("quantity")));
-                                                    }
-                                                } catch (JSONException e) {
-                                                    RudderLogger.logDebug("Error while getting Products: " + products);
-                                                }
-                                            }
-                                            afEventProps.put(AFInAppEventParameterName.CONTENT_ID, pIds.toArray());
-                                            afEventProps.put(AFInAppEventParameterName.CONTENT_TYPE, pCats.toArray());
-                                            afEventProps.put(AFInAppEventParameterName.QUANTITY, pQnts.toArray());
-                                        }
+                                        handleProducts(property, afEventProps);
                                     }
                                     if (property.containsKey(ECommerceParamNames.CURRENCY))
                                         afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
@@ -226,6 +186,30 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                 default:
                     RudderLogger.logWarn("Message type is not supported");
             }
+        }
+    }
+
+    private void handleProducts(Map<String, Object> property, Map<String, Object> afEventProps) {
+        JSONArray products = getJSONArray(property.get(ECommerceParamNames.PRODUCTS));
+        if (products != null && products.length() > 0) {
+            ArrayList<String> pIds = new ArrayList<>();
+            ArrayList<String> pCats = new ArrayList<>();
+            ArrayList<String> pQnts = new ArrayList<>();
+            for (int i = 0; i < products.length(); i++) {
+                try {
+                    JSONObject product = (JSONObject) products.get(i);
+                    if (product.has("product_id") && product.has("category") && product.has("quantity")) {
+                        pIds.add(getString(product.get("product_id")));
+                        pCats.add(getString(product.get("category")));
+                        pQnts.add(getString(product.get("quantity")));
+                    }
+                } catch (JSONException e) {
+                    RudderLogger.logDebug("Error while getting Products: " + products);
+                }
+            }
+            afEventProps.put(AFInAppEventParameterName.CONTENT_ID, pIds.toArray());
+            afEventProps.put(AFInAppEventParameterName.CONTENT_TYPE, pCats.toArray());
+            afEventProps.put(AFInAppEventParameterName.QUANTITY, pQnts.toArray());
         }
     }
 
