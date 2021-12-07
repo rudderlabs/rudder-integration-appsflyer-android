@@ -16,11 +16,11 @@ repositories {
 ```
 3. Add the dependency under ```dependencies```
 ```
-implementation 'com.rudderstack.android.sdk:core:1+'
-implementation 'com.rudderstack.android.integration:appsflyer:1.0.3'
+implementation 'com.rudderstack.android.sdk:core:1.2.1'
+implementation 'com.rudderstack.android.integration:appsflyer:1.0.4'
 
 // appsflyer dependencies
-implementation 'com.appsflyer:af-android-sdk:5.1.1'
+implementation 'com.appsflyer:af-android-sdk:6.4.3'
 implementation 'com.android.installreferrer:installreferrer:1.1.1'  // for attribution
 ```
 
