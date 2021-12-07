@@ -28,6 +28,7 @@ import java.util.Map;
 
 public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
     private static final String APPSFLYER_KEY = "AppsFlyer";
+    private Boolean includeScreen = false;
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
         @Override
@@ -44,6 +45,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
     private AppsFlyerIntegrationFactory(Object config, RudderConfig rudderConfig) {
         Map<String, Object> destConfig = (Map<String, Object>) config;
         if (destConfig != null && destConfig.containsKey("devKey")) {
+            includeScreen = (Boolean) destConfig.get("includeScreenOrPageName");
             String appsFlyerKey = getString(destConfig.get("devKey"));
             if (!TextUtils.isEmpty(appsFlyerKey)) {
                 AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
@@ -174,7 +176,14 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                     }
                     break;
                 case MessageType.SCREEN:
-                    AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), "screen", message.getProperties());
+                    String screenName;
+                    if (includeScreen) {
+                        screenName = "Viewed " + message.getEventName() + " Screen";
+                    }
+                    else {
+                        screenName = "screen";
+                    }
+                    AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), screenName, message.getProperties());
                     break;
                 case MessageType.IDENTIFY:
                     String userId = message.getUserId();
