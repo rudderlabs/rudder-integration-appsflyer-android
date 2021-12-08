@@ -5,10 +5,10 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.4"
     }
 
     buildTypes {
@@ -22,10 +22,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // rudder core sdk
-    compileOnly 'com.rudderstack.android.sdk:core:1.+'
+    implementation 'com.rudderstack.android.sdk:core:[1.2.1,)'
 
     // appsflyer dependencies
-    implementation 'com.appsflyer:af-android-sdk:6.+'
+    implementation 'com.appsflyer:af-android-sdk:6.4.3'
     implementation 'com.android.installreferrer:installreferrer:2.2'
 }
 
