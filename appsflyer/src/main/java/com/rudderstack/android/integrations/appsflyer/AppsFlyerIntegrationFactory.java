@@ -44,15 +44,19 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
 
     private AppsFlyerIntegrationFactory(Object config, RudderConfig rudderConfig) {
         Map<String, Object> destConfig = (Map<String, Object>) config;
-        if (destConfig != null && destConfig.containsKey("devKey")) {
-            isNewScreenEnabled = (Boolean) destConfig.get("useRichEventName");
-            String appsFlyerKey = getString(destConfig.get("devKey"));
-            if (!TextUtils.isEmpty(appsFlyerKey)) {
-                AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
-                AppsFlyerLib.getInstance().setLogLevel(
-                        rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
-                                AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                AppsFlyerLib.getInstance().start(RudderClient.getApplication());
+        if (destConfig != null) {
+            if (destConfig.containsKey("useRichEventName") && destConfig.get("useRichEventName") != null) {
+                isNewScreenEnabled = (Boolean) destConfig.get("useRichEventName");
+            }
+            if (destConfig.containsKey("devKey")) {
+                String appsFlyerKey = getString(destConfig.get("devKey"));
+                if (!TextUtils.isEmpty(appsFlyerKey)) {
+                    AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
+                    AppsFlyerLib.getInstance().setLogLevel(
+                            rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
+                                    AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
+                    AppsFlyerLib.getInstance().start(RudderClient.getApplication());
+                }
             }
         }
     }
@@ -177,13 +181,21 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                     break;
                 case MessageType.SCREEN:
                     String screenName;
+                    Map<String, Object> properties = message.getProperties();
                     if (isNewScreenEnabled) {
-                        screenName = "Viewed " + message.getEventName() + " Screen";
-                    }
-                    else {
+                        if (!TextUtils.isEmpty(message.getEventName())) {
+                            screenName = "Viewed " + message.getEventName() + " Screen";
+                        } else if (properties != null &&
+                                properties.containsKey("name") &&
+                                !TextUtils.isEmpty((String) properties.get("name"))) {
+                            screenName = "Viewed " + properties.get("name") + " Screen";
+                        } else {
+                            screenName = "Viewed Screen";
+                        }
+                    } else {
                         screenName = "screen";
                     }
-                    AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), screenName, message.getProperties());
+                    AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), screenName, properties);
                     break;
                 case MessageType.IDENTIFY:
                     String userId = message.getUserId();
@@ -226,7 +238,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         if (object instanceof JSONArray) {
             return (JSONArray) object;
         }
-        if(object instanceof List){
+        if (object instanceof List) {
             ArrayList<Object> arrayList = new ArrayList<>();
             arrayList.addAll((Collection<?>) object);
             return new JSONArray(arrayList);
@@ -234,7 +246,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         try {
             return new JSONArray((ArrayList) object);
         } catch (Exception e) {
-            RudderLogger.logDebug("Error while converting the products: "+ object +" to JSONArray type");
+            RudderLogger.logDebug("Error while converting the products: " + object + " to JSONArray type");
         }
         return null;
     }
