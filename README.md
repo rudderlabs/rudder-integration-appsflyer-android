@@ -17,7 +17,7 @@ repositories {
 3. Add the dependency under ```dependencies```
 ```
 implementation 'com.rudderstack.android.sdk:core:[1.2.1,)'
-implementation 'com.rudderstack.android.integration:appsflyer:[1.0.4,)'
+implementation 'com.rudderstack.android.integration:appsflyer:[2.0.0,)'
 
 // appsflyer dependencies
 implementation 'com.appsflyer:af-android-sdk:6.4.3'
