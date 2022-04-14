@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import com.appsflyer.AFInAppEventParameterName;
 import com.appsflyer.AFInAppEventType;
-import com.appsflyer.AFLogger;
-import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.rudderstack.android.sdk.core.MessageType;
 import com.rudderstack.android.sdk.core.RudderClient;
@@ -26,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
+public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> {
     private static final String APPSFLYER_KEY = "AppsFlyer";
     private Boolean isNewScreenEnabled = false;
 
@@ -47,16 +45,6 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         if (destConfig != null) {
             if (destConfig.containsKey("useRichEventName") && destConfig.get("useRichEventName") != null) {
                 isNewScreenEnabled = (Boolean) destConfig.get("useRichEventName");
-            }
-            if (destConfig.containsKey("devKey")) {
-                String appsFlyerKey = getString(destConfig.get("devKey"));
-                if (!TextUtils.isEmpty(appsFlyerKey)) {
-                    AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
-                    AppsFlyerLib.getInstance().setLogLevel(
-                            rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
-                                    AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                    AppsFlyerLib.getInstance().start(RudderClient.getApplication());
-                }
             }
         }
     }
@@ -260,23 +248,6 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         return null;
     }
 
-    @Override
-    public void onConversionDataSuccess(Map<String, Object> map) {
-
-    }
-
-    @Override
-    public void onConversionDataFail(String s) {
-
-    }
-
-    @Override
-    public void onAppOpenAttribution(Map<String, String> map) {
-    }
-
-    @Override
-    public void onAttributionFailure(String s) {
-    }
 
     @Override
     public void reset() {

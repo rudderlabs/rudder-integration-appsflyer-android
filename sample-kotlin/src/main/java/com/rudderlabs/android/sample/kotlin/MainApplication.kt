@@ -6,16 +6,23 @@ import com.rudderstack.android.integrations.appsflyer.AppsFlyerIntegrationFactor
 import com.rudderstack.android.sdk.core.RudderClient
 import com.rudderstack.android.sdk.core.RudderConfig
 import com.rudderstack.android.sdk.core.RudderLogger
+import com.appsflyer.AFLogger;
+
 
 class MainApplication : Application() {
     companion object {
-        private const val WRITE_KEY = "1ZOVzjHRL0Vpk627qpkmcIYLrv3"
-        private const val DATA_PLANE_URL = "https://a0a95e46.ngrok.io"
+        private const val WRITE_KEY = "1pAKRv50y15Ti6UWpYroGJaO0Dj"
+        private const val DATA_PLANE_URL = "https://dd86-175-101-36-4.ngrok.io"
         lateinit var rudderClient: RudderClient
     }
 
     override fun onCreate() {
         super.onCreate()
+        
+        AppsFlyerLib.getInstance().init("tZGiwrAUq8xLuNYb99q2VT", null, this);
+        AppsFlyerLib.getInstance().setLogLevel(AFLogger.LogLevel.VERBOSE);
+        AppsFlyerLib.getInstance().setDebugLog(true);
+        AppsFlyerLib.getInstance().start(this);
         rudderClient = RudderClient.getInstance(
             this,
             WRITE_KEY,
