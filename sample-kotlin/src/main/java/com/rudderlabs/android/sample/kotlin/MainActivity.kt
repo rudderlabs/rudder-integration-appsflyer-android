@@ -12,6 +12,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        MainApplication.rudderClient!!.track("Sanity Event");
+        MainApplication.rudderClient!!.track("Sanity Event 2");
         // ECommerce Product
         val productA = ECommerceProduct.Builder()
             .withProductId("some_product_id_a")
