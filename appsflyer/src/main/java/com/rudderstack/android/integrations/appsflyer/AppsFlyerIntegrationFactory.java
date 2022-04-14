@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import com.appsflyer.AFInAppEventParameterName;
 import com.appsflyer.AFInAppEventType;
-import com.appsflyer.AFLogger;
-import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.rudderstack.android.sdk.core.MessageType;
 import com.rudderstack.android.sdk.core.RudderClient;
@@ -26,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
+public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> {
     private static final String APPSFLYER_KEY = "AppsFlyer";
     private Boolean isNewScreenEnabled = false;
 
@@ -249,6 +247,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         }
         return null;
     }
+
 
     @Override
     public void reset() {
