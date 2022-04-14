@@ -48,16 +48,6 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
             if (destConfig.containsKey("useRichEventName") && destConfig.get("useRichEventName") != null) {
                 isNewScreenEnabled = (Boolean) destConfig.get("useRichEventName");
             }
-            if (destConfig.containsKey("devKey")) {
-                String appsFlyerKey = getString(destConfig.get("devKey"));
-                if (!TextUtils.isEmpty(appsFlyerKey)) {
-                    AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
-                    AppsFlyerLib.getInstance().setLogLevel(
-                            rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
-                                    AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                    AppsFlyerLib.getInstance().start(RudderClient.getApplication());
-                }
-            }
         }
     }
 
@@ -258,24 +248,6 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
             return String.valueOf(value);
         }
         return null;
-    }
-
-    @Override
-    public void onConversionDataSuccess(Map<String, Object> map) {
-
-    }
-
-    @Override
-    public void onConversionDataFail(String s) {
-
-    }
-
-    @Override
-    public void onAppOpenAttribution(Map<String, String> map) {
-    }
-
-    @Override
-    public void onAttributionFailure(String s) {
     }
 
     @Override
