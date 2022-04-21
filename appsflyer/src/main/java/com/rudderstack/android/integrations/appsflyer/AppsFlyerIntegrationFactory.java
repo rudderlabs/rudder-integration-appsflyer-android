@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> {
     private static final String APPSFLYER_KEY = "AppsFlyer";
+    private static final String FIRST_PURCHASE = "first_purchase";
     private Boolean isNewScreenEnabled = false;
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
@@ -136,20 +137,12 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     afEventName = AFInAppEventType.INITIATED_CHECKOUT;
                                     break;
                                 case ECommerceEvents.ORDER_COMPLETED:
-                                    if (property.containsKey(ECommerceParamNames.TOTAL))
-                                        afEventProps.put(AFInAppEventParameterName.PRICE, property.get(ECommerceParamNames.TOTAL));
-                                    if (property.containsKey(ECommerceParamNames.REVENUE))
-                                        afEventProps.put(AFInAppEventParameterName.REVENUE, property.get(ECommerceParamNames.REVENUE));
-                                    if (property.containsKey(ECommerceParamNames.PRODUCTS)) {
-                                        handleProducts(property, afEventProps);
-                                    }
-                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
-                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
-                                    if (property.containsKey(ECommerceParamNames.ORDER_ID)) {
-                                        afEventProps.put(AFInAppEventParameterName.RECEIPT_ID, property.get(ECommerceParamNames.ORDER_ID));
-                                        afEventProps.put("af_order_id", property.get(ECommerceParamNames.ORDER_ID));
-                                    }
+                                    makeOrderCompletedEvent(property, afEventProps);
                                     afEventName = AFInAppEventType.PURCHASE;
+                                    break;
+                                case FIRST_PURCHASE:
+                                    makeOrderCompletedEvent(property,afEventProps);
+                                    afEventName = FIRST_PURCHASE;
                                     break;
                                 case ECommerceEvents.PRODUCT_REMOVED:
                                     if (property.containsKey(ECommerceParamNames.PRODUCT_ID))
@@ -195,6 +188,22 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                 default:
                     RudderLogger.logWarn("Message type is not supported");
             }
+        }
+    }
+
+    private void makeOrderCompletedEvent(Map<String, Object> eventProperties, Map<String, Object> afEventProps) {
+        if (eventProperties.containsKey(ECommerceParamNames.TOTAL))
+            afEventProps.put(AFInAppEventParameterName.PRICE, eventProperties.get(ECommerceParamNames.TOTAL));
+        if (eventProperties.containsKey(ECommerceParamNames.REVENUE))
+            afEventProps.put(AFInAppEventParameterName.REVENUE, eventProperties.get(ECommerceParamNames.REVENUE));
+        if (eventProperties.containsKey(ECommerceParamNames.PRODUCTS)) {
+            handleProducts(eventProperties, afEventProps);
+        }
+        if (eventProperties.containsKey(ECommerceParamNames.CURRENCY))
+            afEventProps.put(AFInAppEventParameterName.CURRENCY, eventProperties.get(ECommerceParamNames.CURRENCY));
+        if (eventProperties.containsKey(ECommerceParamNames.ORDER_ID)) {
+            afEventProps.put(AFInAppEventParameterName.RECEIPT_ID, eventProperties.get(ECommerceParamNames.ORDER_ID));
+            afEventProps.put("af_order_id", eventProperties.get(ECommerceParamNames.ORDER_ID));
         }
     }
 
