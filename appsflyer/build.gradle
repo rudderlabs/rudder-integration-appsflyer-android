@@ -7,8 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode 1
-        versionName "2.1.0"
+        buildConfigField("String", "VERSION_NAME", "\"${VERSION_NAME}\"")
     }
 
     buildTypes {
@@ -17,23 +16,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // rudder core sdk
-    implementation 'com.rudderstack.android.sdk:core:[1.2.1,)'
+    implementation 'com.rudderstack.android.sdk:core:[1.8.0,)'
 
     // appsflyer dependencies
     implementation 'com.appsflyer:af-android-sdk:6.4.3'
     implementation 'com.android.installreferrer:installreferrer:2.2'
 }
 
-ext {
-    PUBLISH_GROUP_ID = 'com.rudderstack.android.integration'
-    PUBLISH_VERSION = '2.1.0'
-    PUBLISH_ARTIFACT_ID = 'appsflyer'
-}
 
 
 apply from: rootProject.file('gradle/mvn-publish.gradle')
