@@ -82,7 +82,6 @@ signing {
     useInMemoryPgpKeys(signingKeyId,signingKey, signingPassword)
     sign publishing.publications
 }
-
 publish.dependsOn build
 publishToMavenLocal.dependsOn build
 publishToSonatype.dependsOn publish
