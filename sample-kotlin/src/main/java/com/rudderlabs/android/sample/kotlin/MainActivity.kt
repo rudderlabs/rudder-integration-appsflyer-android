@@ -170,5 +170,44 @@ class MainActivity : AppCompatActivity() {
             productSharedEvent.event(),
             productSharedEvent.properties()
         )
+
+
+        val cartSharedEvent = CartSharedEvent()
+            .withCart(cart)
+            .withSocialChannel("facebook")
+            .withShareMessage("some message")
+            .withRecipient("friend@gmail.com")
+        MainApplication.rudderClient.track(
+            cartSharedEvent.event(),
+            cartSharedEvent.properties()
+        );
+
+        val promotionViewedEvent = PromotionViewedEvent()
+            .withPromotion(
+                ECommercePromotion(
+                    "firstPromotion",
+                    "mail",
+                    "launch",
+                    "head"
+                )
+            );
+        MainApplication.rudderClient.track(
+            promotionViewedEvent.event(),
+            promotionViewedEvent.properties()
+        )
+
+        val promotionClickedEvent = PromotionClickedEvent()
+            .withPromotion(
+                ECommercePromotion(
+                    "firstPromotion",
+                    "mail",
+                    "launch",
+                    "head"
+                )
+            )
+        MainApplication.rudderClient.track(
+            promotionClickedEvent.event(),
+            promotionClickedEvent.properties()
+        )
     }
 }

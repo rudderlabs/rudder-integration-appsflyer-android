@@ -15,7 +15,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.rudderstack.test.android"
+        applicationId "com.rudderstack.test.android3"
         minSdkVersion 19
         targetSdkVersion 33
         versionCode 1
@@ -43,7 +43,7 @@ dependencies {
 
     implementation 'com.rudderstack.android.sdk:core:1.+'
     implementation project(':appsflyer')
-    implementation 'com.appsflyer:af-android-sdk:6.2.0'
+    implementation 'com.appsflyer:af-android-sdk:6.10.2'
     implementation 'com.android.installreferrer:installreferrer:2.2'
     implementation 'com.google.code.gson:gson:2.8.6'
 

@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,12 @@ import java.util.Map;
 public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> {
     private static final String APPSFLYER_KEY = "AppsFlyer";
     private static final String FIRST_PURCHASE = "first_purchase";
+    public static final String CREATIVE = "creative";
     private Boolean isNewScreenEnabled = false;
+
+    static final List<String> TRACK_RESERVED_KEYWORDS = Arrays.asList(ECommerceParamNames.QUERY, ECommerceParamNames.PRICE, ECommerceParamNames.PRODUCT_ID, ECommerceParamNames.CATEGORY,
+            ECommerceParamNames.CURRENCY, ECommerceParamNames.PRODUCTS, ECommerceParamNames.QUANTITY, ECommerceParamNames.TOTAL,
+            ECommerceParamNames.REVENUE, ECommerceParamNames.ORDER_ID, ECommerceParamNames.SHARE_MESSAGE, CREATIVE, ECommerceParamNames.RATING);
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
         @Override
@@ -52,7 +58,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
 
     private void processEvents(RudderMessage message) {
         String eventType = message.getType();
-        String afEventName;
+        String afEventName = null;
         Map<String, Object> afEventProps = new HashMap<>();
         if (eventType != null) {
             switch (eventType) {
@@ -64,7 +70,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                             switch (eventName) {
                                 case ECommerceEvents.PRODUCTS_SEARCHED:
                                     if (property.containsKey(ECommerceParamNames.QUERY)) {
-                                        afEventProps.put(AFInAppEventParameterName.SEARCH_STRING, property.get("query"));
+                                        afEventProps.put(AFInAppEventParameterName.SEARCH_STRING, property.get(ECommerceParamNames.QUERY));
                                     }
                                     afEventName = AFInAppEventType.SEARCH;
                                     break;
@@ -100,7 +106,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                             afEventProps.put(AFInAppEventParameterName.CONTENT_LIST, products.toArray());
                                         }
                                     }
-                                    afEventName = "af_list_view";
+                                    afEventName = AFInAppEventType.LIST_VIEW;
                                     break;
                                 case ECommerceEvents.PRODUCT_ADDED_TO_WISH_LIST:
                                     if (property.containsKey(ECommerceParamNames.PRICE))
@@ -141,7 +147,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     afEventName = AFInAppEventType.PURCHASE;
                                     break;
                                 case FIRST_PURCHASE:
-                                    makeOrderCompletedEvent(property,afEventProps);
+                                    makeOrderCompletedEvent(property, afEventProps);
                                     afEventName = FIRST_PURCHASE;
                                     break;
                                 case ECommerceEvents.PRODUCT_REMOVED:
@@ -151,12 +157,43 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                         afEventProps.put(AFInAppEventParameterName.CONTENT_TYPE, property.get(ECommerceParamNames.CATEGORY));
                                     afEventName = "remove_from_cart";
                                     break;
+                                case ECommerceEvents.PROMOTION_VIEWED:
+                                    if (property.containsKey(CREATIVE))
+                                        afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
+                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
+                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
+                                    afEventName = AFInAppEventType.AD_CLICK;
+                                    break;
+                                case ECommerceEvents.PROMOTION_CLICKED:
+                                    if (property.containsKey(CREATIVE))
+                                        afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
+                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
+                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
+                                    afEventName = AFInAppEventType.AD_VIEW;
+                                    break;
+                                case ECommerceEvents.PAYMENT_INFO_ENTERED:
+                                    afEventName = AFInAppEventType.ADD_PAYMENT_INFO;
+                                    break;
+                                case ECommerceEvents.PRODUCT_SHARED:
+                                case ECommerceEvents.CART_SHARED:
+                                    if (property.containsKey(ECommerceParamNames.SHARE_MESSAGE))
+                                        afEventProps.put(AFInAppEventParameterName.DESCRIPTION, property.get(ECommerceParamNames.SHARE_MESSAGE));
+                                    afEventName = AFInAppEventType.SHARE;
+                                    break;
+                                case ECommerceEvents.PRODUCT_REVIEWED:
+                                    if (property.containsKey(ECommerceParamNames.PRODUCT_ID))
+                                        afEventProps.put(AFInAppEventParameterName.CONTENT_ID, property.get(ECommerceParamNames.PRODUCT_ID));
+                                    if (property.containsKey(ECommerceParamNames.RATING))
+                                        afEventProps.put(AFInAppEventParameterName.RATING_VALUE, property.get(ECommerceParamNames.RATING));
+                                    afEventName = AFInAppEventType.RATE;
+                                    break;
                                 default:
                                     afEventName = eventName.toLowerCase().replace(" ", "_");
                             }
                         } else {
                             afEventName = eventName.toLowerCase().replace(" ", "_");
                         }
+                        attachAllCustomProperties(afEventProps, property);
                         AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), afEventName, afEventProps);
                     }
                     break;
@@ -188,6 +225,19 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                 default:
                     RudderLogger.logWarn("Message type is not supported");
             }
+        }
+    }
+
+    private void attachAllCustomProperties(Map<String, Object> afEventProps, Map<String, Object> properties) {
+        if (properties == null || properties.size() == 0) {
+            return;
+        }
+        for (String key : properties.keySet()) {
+            Object value = properties.get(key);
+            if (TRACK_RESERVED_KEYWORDS.contains(key) || TextUtils.isEmpty(key)) {
+                continue;
+            }
+            afEventProps.put(key, value);
         }
     }
 
