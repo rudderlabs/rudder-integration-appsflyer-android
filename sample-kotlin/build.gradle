@@ -12,15 +12,24 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+Properties properties = new Properties()
+File localPropertiesFile = new File(project.projectDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.newDataInputStream())
+}
+
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.rudderstack.test.android3"
+        applicationId "com.desu.venkat.android"
         minSdkVersion 19
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "DATA_PLANE_URL", properties.getProperty('dataplaneUrl', '\"https://hosted.rudderlabs.com\"'))
+        buildConfigField("String", "CONTROL_PLANE_URL", properties.getProperty('controlplaneUrl', '\"https://api.rudderstack.com\"'))
+        buildConfigField("String", "WRITE_KEY", properties.getProperty('writeKey', '\"\"'))
     }
     buildTypes {
         release {

@@ -25,9 +25,9 @@ class MainApplication : Application() {
         AppsFlyerLib.getInstance().start(this);
         rudderClient = RudderClient.getInstance(
             this,
-            WRITE_KEY,
+            BuildConfig.WRITE_KEY,
             RudderConfig.Builder()
-                .withDataPlaneUrl(DATA_PLANE_URL)
+                .withDataPlaneUrl(BuildConfig.DATA_PLANE_URL)
                 .withFactory(AppsFlyerIntegrationFactory.FACTORY)
                 .withLogLevel(RudderLogger.RudderLogLevel.DEBUG)
                 .build()
