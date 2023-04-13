@@ -162,14 +162,14 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                         afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
                                     if (property.containsKey(ECommerceParamNames.CURRENCY))
                                         afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
-                                    afEventName = AFInAppEventType.AD_CLICK;
+                                    afEventName = AFInAppEventType.AD_VIEW;
                                     break;
                                 case ECommerceEvents.PROMOTION_CLICKED:
                                     if (property.containsKey(CREATIVE))
                                         afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
                                     if (property.containsKey(ECommerceParamNames.CURRENCY))
                                         afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
-                                    afEventName = AFInAppEventType.AD_VIEW;
+                                    afEventName = AFInAppEventType.AD_CLICK;
                                     break;
                                 case ECommerceEvents.PAYMENT_INFO_ENTERED:
                                     afEventName = AFInAppEventType.ADD_PAYMENT_INFO;
