@@ -8,4 +8,6 @@ local.properties
 .project
 /.settings
 **/.classpath
-**/.settingsnode_modules/*
+**/.settings
+.DS_Store
+node_modules/*
