@@ -2,13 +2,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 33
-        versionCode 1
-        versionName "2.2.0"
+        targetSdkVersion 31
+        buildConfigField("String", "VERSION_NAME", "\"${VERSION_NAME}\"")
+
     }
 
     buildTypes {
@@ -16,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -30,12 +34,7 @@ dependencies {
     implementation 'com.android.installreferrer:installreferrer:2.2'
 }
 
-ext {
-    PUBLISH_GROUP_ID = 'com.rudderstack.android.integration'
-    PUBLISH_VERSION = '2.2.0'
-    PUBLISH_ARTIFACT_ID = 'appsflyer'
-}
 
-apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
-
+apply from: rootProject.file('gradle/mvn-publish.gradle')
+apply from: rootProject.file('gradle/codecov.gradle')
 
