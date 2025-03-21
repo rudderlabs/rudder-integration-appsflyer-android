@@ -19,7 +19,6 @@ jobs:
           outdated-dependency-names: "com.appsflyer:af-android-sdk"
           directory: "appsflyer/build.gradle"
           title: "fix: update Appsflyer SDK to the latest version"
-          assignee: "desusai7"
           labels: "outdatedDependency"
           color: "FBCA04"
         env:
