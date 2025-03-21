@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.3.1 (2025-03-21)
+
+
+### Bug Fixes
+
+* removed un-relevant permissions ([#19](https://github.com/rudderlabs/rudder-integration-appsflyer-android/issues/19)) ([024c307](https://github.com/rudderlabs/rudder-integration-appsflyer-android/commit/024c307f412715aa7019afcfe42e541fd50363d1))
+
 ## [2.3.0](https://github.com/rudderlabs/rudder-integration-appsflyer-android/compare/v0.1.1...v2.3.0) (2023-05-02)
 
 
