@@ -4,8 +4,6 @@ import android.text.TextUtils;
 
 import com.appsflyer.AFInAppEventParameterName;
 import com.appsflyer.AFInAppEventType;
-import com.appsflyer.AFLogger;
-import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 import com.rudderstack.android.sdk.core.MessageType;
 import com.rudderstack.android.sdk.core.RudderClient;
@@ -21,14 +19,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> implements AppsFlyerConversionListener {
+public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib> {
     private static final String APPSFLYER_KEY = "AppsFlyer";
+    private static final String FIRST_PURCHASE = "first_purchase";
+    public static final String CREATIVE = "creative";
     private Boolean isNewScreenEnabled = false;
+
+    static final List<String> TRACK_RESERVED_KEYWORDS = Arrays.asList(ECommerceParamNames.QUERY, ECommerceParamNames.PRICE, ECommerceParamNames.PRODUCT_ID, ECommerceParamNames.CATEGORY,
+            ECommerceParamNames.CURRENCY, ECommerceParamNames.PRODUCTS, ECommerceParamNames.QUANTITY, ECommerceParamNames.TOTAL,
+            ECommerceParamNames.REVENUE, ECommerceParamNames.ORDER_ID, ECommerceParamNames.SHARE_MESSAGE, CREATIVE, ECommerceParamNames.RATING);
 
     public static RudderIntegration.Factory FACTORY = new Factory() {
         @Override
@@ -48,22 +53,12 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
             if (destConfig.containsKey("useRichEventName") && destConfig.get("useRichEventName") != null) {
                 isNewScreenEnabled = (Boolean) destConfig.get("useRichEventName");
             }
-            if (destConfig.containsKey("devKey")) {
-                String appsFlyerKey = getString(destConfig.get("devKey"));
-                if (!TextUtils.isEmpty(appsFlyerKey)) {
-                    AppsFlyerLib.getInstance().init(appsFlyerKey, this, RudderClient.getApplication());
-                    AppsFlyerLib.getInstance().setLogLevel(
-                            rudderConfig.getLogLevel() >= RudderLogger.RudderLogLevel.DEBUG ?
-                                    AFLogger.LogLevel.VERBOSE : AFLogger.LogLevel.NONE);
-                    AppsFlyerLib.getInstance().start(RudderClient.getApplication());
-                }
-            }
         }
     }
 
     private void processEvents(RudderMessage message) {
         String eventType = message.getType();
-        String afEventName;
+        String afEventName = null;
         Map<String, Object> afEventProps = new HashMap<>();
         if (eventType != null) {
             switch (eventType) {
@@ -75,7 +70,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                             switch (eventName) {
                                 case ECommerceEvents.PRODUCTS_SEARCHED:
                                     if (property.containsKey(ECommerceParamNames.QUERY)) {
-                                        afEventProps.put(AFInAppEventParameterName.SEARCH_STRING, property.get("query"));
+                                        afEventProps.put(AFInAppEventParameterName.SEARCH_STRING, property.get(ECommerceParamNames.QUERY));
                                     }
                                     afEventName = AFInAppEventType.SEARCH;
                                     break;
@@ -111,7 +106,7 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                             afEventProps.put(AFInAppEventParameterName.CONTENT_LIST, products.toArray());
                                         }
                                     }
-                                    afEventName = "af_list_view";
+                                    afEventName = AFInAppEventType.LIST_VIEW;
                                     break;
                                 case ECommerceEvents.PRODUCT_ADDED_TO_WISH_LIST:
                                     if (property.containsKey(ECommerceParamNames.PRICE))
@@ -148,20 +143,12 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                     afEventName = AFInAppEventType.INITIATED_CHECKOUT;
                                     break;
                                 case ECommerceEvents.ORDER_COMPLETED:
-                                    if (property.containsKey(ECommerceParamNames.TOTAL))
-                                        afEventProps.put(AFInAppEventParameterName.PRICE, property.get(ECommerceParamNames.TOTAL));
-                                    if (property.containsKey(ECommerceParamNames.REVENUE))
-                                        afEventProps.put(AFInAppEventParameterName.REVENUE, property.get(ECommerceParamNames.REVENUE));
-                                    if (property.containsKey(ECommerceParamNames.PRODUCTS)) {
-                                        handleProducts(property, afEventProps);
-                                    }
-                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
-                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
-                                    if (property.containsKey(ECommerceParamNames.ORDER_ID)) {
-                                        afEventProps.put(AFInAppEventParameterName.RECEIPT_ID, property.get(ECommerceParamNames.ORDER_ID));
-                                        afEventProps.put("af_order_id", property.get(ECommerceParamNames.ORDER_ID));
-                                    }
+                                    makeOrderCompletedEvent(property, afEventProps);
                                     afEventName = AFInAppEventType.PURCHASE;
+                                    break;
+                                case FIRST_PURCHASE:
+                                    makeOrderCompletedEvent(property, afEventProps);
+                                    afEventName = FIRST_PURCHASE;
                                     break;
                                 case ECommerceEvents.PRODUCT_REMOVED:
                                     if (property.containsKey(ECommerceParamNames.PRODUCT_ID))
@@ -170,12 +157,43 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                                         afEventProps.put(AFInAppEventParameterName.CONTENT_TYPE, property.get(ECommerceParamNames.CATEGORY));
                                     afEventName = "remove_from_cart";
                                     break;
+                                case ECommerceEvents.PROMOTION_VIEWED:
+                                    if (property.containsKey(CREATIVE))
+                                        afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
+                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
+                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
+                                    afEventName = AFInAppEventType.AD_VIEW;
+                                    break;
+                                case ECommerceEvents.PROMOTION_CLICKED:
+                                    if (property.containsKey(CREATIVE))
+                                        afEventProps.put(AFInAppEventParameterName.AD_REVENUE_AD_TYPE, property.get(CREATIVE));
+                                    if (property.containsKey(ECommerceParamNames.CURRENCY))
+                                        afEventProps.put(AFInAppEventParameterName.CURRENCY, property.get(ECommerceParamNames.CURRENCY));
+                                    afEventName = AFInAppEventType.AD_CLICK;
+                                    break;
+                                case ECommerceEvents.PAYMENT_INFO_ENTERED:
+                                    afEventName = AFInAppEventType.ADD_PAYMENT_INFO;
+                                    break;
+                                case ECommerceEvents.PRODUCT_SHARED:
+                                case ECommerceEvents.CART_SHARED:
+                                    if (property.containsKey(ECommerceParamNames.SHARE_MESSAGE))
+                                        afEventProps.put(AFInAppEventParameterName.DESCRIPTION, property.get(ECommerceParamNames.SHARE_MESSAGE));
+                                    afEventName = AFInAppEventType.SHARE;
+                                    break;
+                                case ECommerceEvents.PRODUCT_REVIEWED:
+                                    if (property.containsKey(ECommerceParamNames.PRODUCT_ID))
+                                        afEventProps.put(AFInAppEventParameterName.CONTENT_ID, property.get(ECommerceParamNames.PRODUCT_ID));
+                                    if (property.containsKey(ECommerceParamNames.RATING))
+                                        afEventProps.put(AFInAppEventParameterName.RATING_VALUE, property.get(ECommerceParamNames.RATING));
+                                    afEventName = AFInAppEventType.RATE;
+                                    break;
                                 default:
                                     afEventName = eventName.toLowerCase().replace(" ", "_");
                             }
                         } else {
                             afEventName = eventName.toLowerCase().replace(" ", "_");
                         }
+                        attachAllCustomProperties(afEventProps, property);
                         AppsFlyerLib.getInstance().logEvent(RudderClient.getApplication(), afEventName, afEventProps);
                     }
                     break;
@@ -207,6 +225,35 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
                 default:
                     RudderLogger.logWarn("Message type is not supported");
             }
+        }
+    }
+
+    private void attachAllCustomProperties(Map<String, Object> afEventProps, Map<String, Object> properties) {
+        if (properties == null || properties.size() == 0) {
+            return;
+        }
+        for (String key : properties.keySet()) {
+            Object value = properties.get(key);
+            if (TRACK_RESERVED_KEYWORDS.contains(key) || TextUtils.isEmpty(key)) {
+                continue;
+            }
+            afEventProps.put(key, value);
+        }
+    }
+
+    private void makeOrderCompletedEvent(Map<String, Object> eventProperties, Map<String, Object> afEventProps) {
+        if (eventProperties.containsKey(ECommerceParamNames.TOTAL))
+            afEventProps.put(AFInAppEventParameterName.PRICE, eventProperties.get(ECommerceParamNames.TOTAL));
+        if (eventProperties.containsKey(ECommerceParamNames.REVENUE))
+            afEventProps.put(AFInAppEventParameterName.REVENUE, eventProperties.get(ECommerceParamNames.REVENUE));
+        if (eventProperties.containsKey(ECommerceParamNames.PRODUCTS)) {
+            handleProducts(eventProperties, afEventProps);
+        }
+        if (eventProperties.containsKey(ECommerceParamNames.CURRENCY))
+            afEventProps.put(AFInAppEventParameterName.CURRENCY, eventProperties.get(ECommerceParamNames.CURRENCY));
+        if (eventProperties.containsKey(ECommerceParamNames.ORDER_ID)) {
+            afEventProps.put(AFInAppEventParameterName.RECEIPT_ID, eventProperties.get(ECommerceParamNames.ORDER_ID));
+            afEventProps.put("af_order_id", eventProperties.get(ECommerceParamNames.ORDER_ID));
         }
     }
 
@@ -260,23 +307,6 @@ public class AppsFlyerIntegrationFactory extends RudderIntegration<AppsFlyerLib>
         return null;
     }
 
-    @Override
-    public void onConversionDataSuccess(Map<String, Object> map) {
-
-    }
-
-    @Override
-    public void onConversionDataFail(String s) {
-
-    }
-
-    @Override
-    public void onAppOpenAttribution(Map<String, String> map) {
-    }
-
-    @Override
-    public void onAttributionFailure(String s) {
-    }
 
     @Override
     public void reset() {

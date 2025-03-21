@@ -12,6 +12,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        MainApplication.rudderClient!!.track("Sanity Event");
+        MainApplication.rudderClient!!.track("Sanity Event 2");
         // ECommerce Product
         val productA = ECommerceProduct.Builder()
             .withProductId("some_product_id_a")
@@ -167,6 +169,45 @@ class MainActivity : AppCompatActivity() {
         MainApplication.rudderClient.track(
             productSharedEvent.event(),
             productSharedEvent.properties()
+        )
+
+
+        val cartSharedEvent = CartSharedEvent()
+            .withCart(cart)
+            .withSocialChannel("facebook")
+            .withShareMessage("some message")
+            .withRecipient("friend@gmail.com")
+        MainApplication.rudderClient.track(
+            cartSharedEvent.event(),
+            cartSharedEvent.properties()
+        );
+
+        val promotionViewedEvent = PromotionViewedEvent()
+            .withPromotion(
+                ECommercePromotion(
+                    "firstPromotion",
+                    "mail",
+                    "launch",
+                    "head"
+                )
+            );
+        MainApplication.rudderClient.track(
+            promotionViewedEvent.event(),
+            promotionViewedEvent.properties()
+        )
+
+        val promotionClickedEvent = PromotionClickedEvent()
+            .withPromotion(
+                ECommercePromotion(
+                    "firstPromotion",
+                    "mail",
+                    "launch",
+                    "head"
+                )
+            )
+        MainApplication.rudderClient.track(
+            promotionClickedEvent.event(),
+            promotionClickedEvent.properties()
         )
     }
 }
