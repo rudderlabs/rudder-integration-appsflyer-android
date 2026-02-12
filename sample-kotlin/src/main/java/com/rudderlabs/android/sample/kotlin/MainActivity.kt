@@ -1,213 +1,212 @@
 package com.rudderlabs.android.sample.kotlin
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.rudderstack.android.sdk.core.RudderMessageBuilder
-import com.rudderstack.android.sdk.core.ecomm.*
-import com.rudderstack.android.sdk.core.ecomm.events.*
+import com.rudderstack.android.sdk.core.RudderProperty
+import com.rudderstack.android.sdk.core.RudderTraits
 
 class MainActivity : AppCompatActivity() {
-    private var count = 0
+
+    private val rudderClient get() = MainApplication.rudderClient
+
+    private val productA = mapOf(
+        "product_id" to "product_id_a",
+        "category" to "clothing",
+        "quantity" to 1
+    )
+
+    private val productB = mapOf(
+        "product_id" to "product_id_b",
+        "category" to "electronics",
+        "quantity" to 2
+    )
+
+    private val orderProperties
+        get() = RudderProperty()
+            .putValue("order_id", "order_001")
+            .putValue("currency", "USD")
+            .putValue("total", 12.99)
+            .putValue("revenue", 10.99)
+            .putValue("products", listOf(productA, productB))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        MainApplication.rudderClient!!.track("Sanity Event");
-        MainApplication.rudderClient!!.track("Sanity Event 2");
-        // ECommerce Product
-        val productA = ECommerceProduct.Builder()
-            .withProductId("some_product_id_a")
-            .withSku("some_product_sku_a")
-            .withCurrency("USD")
-            .withPrice(2.99f)
-            .withName("Some Product Name A")
-            .withQuantity(1f)
-            .build()
+        setupIdentifyButtons()
+        setupECommerceButtons()
+        setupTrackButtons()
+        setupScreenButton()
+    }
 
-        val productB = ECommerceProduct.Builder()
-            .withProductId("some_product_id_b")
-            .withSku("some_product_sku_b")
-            .withCurrency("USD")
-            .withPrice(3.99f)
-            .withName("Some Product Name B")
-            .withQuantity(1f)
-            .build()
+    private fun setupIdentifyButtons() {
+        findViewById<Button>(R.id.btnIdentifyUserId).setOnClickListener {
+            rudderClient.identify("test_user_id")
+        }
 
-        val productC = ECommerceProduct.Builder()
-            .withProductId("some_product_id_c")
-            .withSku("some_product_sku_c")
-            .withCurrency("USD")
-            .withPrice(4.99f)
-            .withName("Some Product Name C")
-            .withQuantity(1f)
-            .build()
-
-        // ECommerce WishList
-        val wishList = ECommerceWishList.Builder()
-            .withWishListId("some_wish_list_id")
-            .withWishListName("Some Wish List Name")
-            .build()
-
-        // ECommerce Cart
-        val cart = ECommerceCart.Builder()
-            .withCartId("some_cart_id")
-            .withProduct(productA)
-            .withProduct(productB)
-            .withProduct(productC)
-            .build()
-
-        // ECommerce Order
-        val order = ECommerceOrder.Builder()
-            .withOrderId("some_order_id")
-            .withAffiliation("some_order_affiliation")
-            .withCoupon("some_coupon")
-            .withCurrency("USD")
-            .withDiscount(1.49f)
-            .withProducts(productA, productB, productC)
-            .withRevenue(10.99f)
-            .withShippingCost(2.49f)
-            .withTax(1.49f)
-            .withTotal(12.99f)
-            .withValue(10.49f)
-            .build()
-
-        // ECommerce Checkout event
-        val checkout = ECommerceCheckout.Builder()
-            .withCheckoutId("some_checkout_id")
-            .withOrderId("some_order_id")
-            .withPaymentMethod("Visa")
-            .withShippingMethod("FedEx")
-            .withStep(1)
-            .build()
-
-        MainApplication.rudderClient.identify("some_user_id")
-
-        val productAddedToCartEvent = ProductAddedToCartEvent()
-            .withCartId("some_cart_id")
-            .withProduct(productA)
-        MainApplication.rudderClient.track(
-            RudderMessageBuilder()
-                .setEventName(productAddedToCartEvent.event())
-                .setProperty(productAddedToCartEvent.properties())
-                .build()
-        )
-
-        val productAddedToWishListEvent = ProductAddedToWishListEvent()
-            .withWishList(wishList)
-            .withProduct(productA)
-        MainApplication.rudderClient.track(
-            RudderMessageBuilder()
-                .setProperty(productAddedToWishListEvent.properties())
-                .setEventName(productAddedToWishListEvent.event())
-        )
-
-        val cartViewedEvent = CartViewedEvent().withCart(cart)
-        MainApplication.rudderClient.track(cartViewedEvent.event(), cartViewedEvent.properties())
-
-//        MainApplication.rudderClient.reset()
-
-        val checkoutStartedEvent = CheckoutStartedEvent().withOrder(order)
-        MainApplication.rudderClient.track(
-            checkoutStartedEvent.event(),
-            checkoutStartedEvent.properties()
-        )
-
-        val paymentInfoEnteredEvent = PaymentInfoEnteredEvent()
-            .withCheckout(checkout)
-        MainApplication.rudderClient.track(
-            paymentInfoEnteredEvent.event(),
-            paymentInfoEnteredEvent.properties()
-        )
-
-        val orderCompletedEvent = OrderCompletedEvent().withOrder(order)
-        MainApplication.rudderClient.track(
-            orderCompletedEvent.event(),
-            orderCompletedEvent.properties()
-        )
-
-        val spendCreditEvent = OrderCompletedEvent().withOrder(order)
-        MainApplication.rudderClient.track(
-            "Spend Credits",
-            spendCreditEvent.properties()
-        )
-
-        val productSearchedEvent = ProductSearchedEvent().withQuery("blue hot pants")
-        MainApplication.rudderClient.track(
-            productSearchedEvent.event(),
-            productSearchedEvent.properties()
-        )
-
-        val productViewedEvent = ProductViewedEvent()
-            .withProduct(productA);
-        MainApplication.rudderClient.track(
-            productViewedEvent.event(),
-            productViewedEvent.properties()
-        )
-
-        val productListViewedEvent = ProductListViewedEvent()
-            .withProducts(productA, productB, productC)
-        MainApplication.rudderClient.track(
-            productListViewedEvent.event(),
-            productListViewedEvent.properties()
-        )
-
-        val productReviewedEvent = ProductReviewedEvent()
-            .withProduct(productA)
-            .withRating(2.0)
-            .withReviewBody("Some Review Body")
-            .withReviewId("some_review_id")
-        MainApplication.rudderClient.track(
-            productReviewedEvent.event(),
-            productReviewedEvent.properties()
-        )
-
-        val productSharedEvent = ProductSharedEvent()
-            .withProduct(productA)
-            .withRecipient("friend@gmail.com")
-            .withShareMessage("Some Share Message")
-            .withSocialChannel("Gmail")
-        MainApplication.rudderClient.track(
-            productSharedEvent.event(),
-            productSharedEvent.properties()
-        )
-
-
-        val cartSharedEvent = CartSharedEvent()
-            .withCart(cart)
-            .withSocialChannel("facebook")
-            .withShareMessage("some message")
-            .withRecipient("friend@gmail.com")
-        MainApplication.rudderClient.track(
-            cartSharedEvent.event(),
-            cartSharedEvent.properties()
-        );
-
-        val promotionViewedEvent = PromotionViewedEvent()
-            .withPromotion(
-                ECommercePromotion(
-                    "firstPromotion",
-                    "mail",
-                    "launch",
-                    "head"
-                )
-            );
-        MainApplication.rudderClient.track(
-            promotionViewedEvent.event(),
-            promotionViewedEvent.properties()
-        )
-
-        val promotionClickedEvent = PromotionClickedEvent()
-            .withPromotion(
-                ECommercePromotion(
-                    "firstPromotion",
-                    "mail",
-                    "launch",
-                    "head"
-                )
+        findViewById<Button>(R.id.btnIdentifyWithTraits).setOnClickListener {
+            rudderClient.identify(
+                "test_user_id",
+                RudderTraits()
+                    .putEmail("test@example.com")
+                    .putName("Test User")
+                    .putPhone("1234567890"),
+                null
             )
-        MainApplication.rudderClient.track(
-            promotionClickedEvent.event(),
-            promotionClickedEvent.properties()
-        )
+        }
+    }
+
+    private fun setupECommerceButtons() {
+        findViewById<Button>(R.id.btnProductsSearched).setOnClickListener {
+            rudderClient.track(
+                "Products Searched",
+                RudderProperty().putValue("query", "Product-key-1")
+            )
+        }
+
+        findViewById<Button>(R.id.btnProductViewed).setOnClickListener {
+            rudderClient.track(
+                "Product Viewed",
+                RudderProperty()
+                    .putValue("product_id", "product_id_a")
+                    .putValue("price", 2.99)
+                    .putValue("category", "clothing")
+                    .putValue("currency", "USD")
+            )
+        }
+
+        findViewById<Button>(R.id.btnProductListViewed).setOnClickListener {
+            rudderClient.track(
+                "Product List Viewed",
+                RudderProperty()
+                    .putValue("category", "clothing")
+                    .putValue("products", listOf(productA, productB))
+            )
+        }
+
+        findViewById<Button>(R.id.btnProductAddedToWishlist).setOnClickListener {
+            rudderClient.track(
+                "Product Added to Wishlist",
+                RudderProperty()
+                    .putValue("product_id", "product_id_a")
+                    .putValue("price", 2.99)
+                    .putValue("category", "clothing")
+                    .putValue("currency", "USD")
+            )
+        }
+
+        findViewById<Button>(R.id.btnProductAdded).setOnClickListener {
+            rudderClient.track(
+                "Product Added",
+                RudderProperty()
+                    .putValue("product_id", "product_id_a")
+                    .putValue("price", 2.99)
+                    .putValue("category", "clothing")
+                    .putValue("currency", "USD")
+                    .putValue("quantity", 5)
+            )
+        }
+
+        findViewById<Button>(R.id.btnCheckoutStarted).setOnClickListener {
+            rudderClient.track(
+                "Checkout Started",
+                RudderProperty()
+                    .putValue("total", 12.99)
+                    .putValue("currency", "USD")
+                    .putValue("products", listOf(productA, productB))
+            )
+        }
+
+        findViewById<Button>(R.id.btnOrderCompleted).setOnClickListener {
+            rudderClient.track("Order Completed", orderProperties)
+        }
+
+        findViewById<Button>(R.id.btnFirstPurchase).setOnClickListener {
+            rudderClient.track("first_purchase", orderProperties)
+        }
+
+        findViewById<Button>(R.id.btnProductRemoved).setOnClickListener {
+            rudderClient.track(
+                "Product Removed",
+                RudderProperty()
+                    .putValue("product_id", "product_id_a")
+                    .putValue("category", "clothing")
+            )
+        }
+
+        findViewById<Button>(R.id.btnPromotionViewed).setOnClickListener {
+            rudderClient.track(
+                "Promotion Viewed",
+                RudderProperty()
+                    .putValue("creative", "email")
+                    .putValue("currency", "USD")
+            )
+        }
+
+        findViewById<Button>(R.id.btnPromotionClicked).setOnClickListener {
+            rudderClient.track(
+                "Promotion Clicked",
+                RudderProperty()
+                    .putValue("creative", "email")
+                    .putValue("currency", "USD")
+            )
+        }
+
+        findViewById<Button>(R.id.btnPaymentInfoEntered).setOnClickListener {
+            rudderClient.track("Payment Info Entered")
+        }
+
+        findViewById<Button>(R.id.btnProductShared).setOnClickListener {
+            rudderClient.track(
+                "Product Shared",
+                RudderProperty()
+                    .putValue("share_message", "Check this out!")
+            )
+        }
+
+        findViewById<Button>(R.id.btnCartShared).setOnClickListener {
+            rudderClient.track(
+                "Cart Shared",
+                RudderProperty()
+                    .putValue("share_message", "Look at my cart")
+            )
+        }
+
+        findViewById<Button>(R.id.btnProductReviewed).setOnClickListener {
+            rudderClient.track(
+                "Product Reviewed",
+                RudderProperty()
+                    .putValue("product_id", "product_id_a")
+                    .putValue("rating", 4.5)
+            )
+        }
+    }
+
+    private fun setupTrackButtons() {
+        findViewById<Button>(R.id.btnCustomTrackWithProps).setOnClickListener {
+            rudderClient.track(
+                "Custom Event",
+                RudderProperty()
+                    .putValue("key_1", "value_1")
+                    .putValue("key_2", 42)
+                    .putValue("key_3", true)
+            )
+        }
+
+        findViewById<Button>(R.id.btnCustomTrackNoProps).setOnClickListener {
+            rudderClient.track("Custom Event No Props")
+        }
+    }
+
+    private fun setupScreenButton() {
+        findViewById<Button>(R.id.btnScreen).setOnClickListener {
+            rudderClient.screen(
+                "Home",
+                RudderProperty()
+                    .putValue("source", "navigation")
+                    .putValue("section", "main")
+            )
+        }
     }
 }
