@@ -30,7 +30,7 @@ dependencies {
     compileOnly 'com.rudderstack.android.sdk:core:[1.12, 2.0)'
 
     // appsflyer dependencies
-    implementation 'com.appsflyer:af-android-sdk:[6.10.1, 7.0)'
+    implementation 'com.appsflyer:af-android-sdk:[6.17.5, 7.0)'
     implementation 'com.android.installreferrer:installreferrer:2.2'
 }
 

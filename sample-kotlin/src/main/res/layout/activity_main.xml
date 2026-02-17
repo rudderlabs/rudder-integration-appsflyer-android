@@ -1,39 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Count: "
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Click To Generate Track"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Identify"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp" />
 
-    <Button
-        android:id="@+id/rst"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Reset"
-        app:layout_constraintEnd_toEndOf="@+id/btn"
-        app:layout_constraintStart_toStartOf="@+id/btn"
-        app:layout_constraintTop_toBottomOf="@+id/btn" />
+        <Button
+            android:id="@+id/btnIdentifyUserId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Identify (userId only)" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btnIdentifyWithTraits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Identify (userId + traits)" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ECommerce Events"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
+
+        <Button
+            android:id="@+id/btnProductsSearched"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Products Searched" />
+
+        <Button
+            android:id="@+id/btnProductViewed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Viewed" />
+
+        <Button
+            android:id="@+id/btnProductListViewed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product List Viewed" />
+
+        <Button
+            android:id="@+id/btnProductAddedToWishlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Added to Wishlist" />
+
+        <Button
+            android:id="@+id/btnProductAdded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Added" />
+
+        <Button
+            android:id="@+id/btnCheckoutStarted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Checkout Started" />
+
+        <Button
+            android:id="@+id/btnOrderCompleted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order Completed" />
+
+        <Button
+            android:id="@+id/btnFirstPurchase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First Purchase" />
+
+        <Button
+            android:id="@+id/btnProductRemoved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Removed" />
+
+        <Button
+            android:id="@+id/btnPromotionViewed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Promotion Viewed" />
+
+        <Button
+            android:id="@+id/btnPromotionClicked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Promotion Clicked" />
+
+        <Button
+            android:id="@+id/btnPaymentInfoEntered"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Info Entered" />
+
+        <Button
+            android:id="@+id/btnProductShared"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Shared" />
+
+        <Button
+            android:id="@+id/btnCartShared"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cart Shared" />
+
+        <Button
+            android:id="@+id/btnProductReviewed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Reviewed" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Track"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
+
+        <Button
+            android:id="@+id/btnCustomTrackWithProps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Custom Track (with properties)" />
+
+        <Button
+            android:id="@+id/btnCustomTrackNoProps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Custom Track (no properties)" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Screen"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
+
+        <Button
+            android:id="@+id/btnScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Screen (with properties)" />
+
+
+    </LinearLayout>
+</ScrollView>

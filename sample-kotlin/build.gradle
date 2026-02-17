@@ -21,7 +21,7 @@ if (localPropertiesFile.exists()) {
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.desu.venkat.android"
+        applicationId "com.rudderstack.sampleapp"
         minSdkVersion 19
         targetSdkVersion 33
         versionCode 1
