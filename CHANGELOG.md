@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 2.4.0 (2026-02-17)
+
+
+### Features
+
+* bump the minimum appsflyer version to 7.17.5 ([#28](https://github.com/rudderlabs/rudder-integration-appsflyer-android/issues/28)) ([a844ce7](https://github.com/rudderlabs/rudder-integration-appsflyer-android/commit/a844ce718dd99e6ce3829acd4c0206792a3d3850))
+
 ### 2.3.1 (2025-03-21)
 
 
