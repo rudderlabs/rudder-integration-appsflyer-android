@@ -1,10 +1,10 @@
 
 apply plugin: 'com.android.library'
 
-java {
-    toolchain {
+tasks.withType(JavaCompile).configureEach {
+    javaCompiler.set(javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(17)
-    }
+    })
 }
 
 android {
