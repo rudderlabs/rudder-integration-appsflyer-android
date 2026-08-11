@@ -1,6 +1,12 @@
 
 apply plugin: 'com.android.library'
 
+tasks.withType(JavaCompile).configureEach {
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    })
+}
+
 android {
     compileSdkVersion 31
 
@@ -37,4 +43,3 @@ dependencies {
 
 apply from: rootProject.file('gradle/mvn-publish.gradle')
 apply from: rootProject.file('gradle/codecov.gradle')
-
